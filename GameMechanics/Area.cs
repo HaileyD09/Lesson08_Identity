@@ -44,9 +44,7 @@ public record Area : Identifiable
 
     /// <summary>
     /// Sometimes it is ok to expose a constructor, but not always.  
-    /// This one is for the builder, which is trusted to do the right thing.  
-    /// The public Create is Lesson 5's factory, which checks the numbers it's handed.  
-    /// The internal Create is for CreatureBuilder, and it trusts the builder
+    /// This one is for AreaBuilder, which is trusted to do the right thing.
     /// </summary>
     /// <param name="name"></param>
     internal Area(string name) { Name = name; }

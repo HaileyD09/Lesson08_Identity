@@ -33,8 +33,8 @@ public record PlayerBuilder
     /// <summary>
     /// Start with a FROM method.  The first natural place to start is the player's name.
     /// </summary>
-    /// <param name="name">Checked by ValidateName, at the bottom of this file.</param>
-    public static PlayerBuilder FromName(string name) => new() { _name = ValidateName(name) };
+    /// <param name="name">Checked by Helpers.ValidateString, in GlobalIncludes.cs.</param>
+    public static PlayerBuilder FromName(string name) => new() { _name = Helpers.ValidateString(name, "Frank") };
 
     //------------------------------------------------------------------------------------
     // With methods are how we "Build" the Player from its constituent parts.
@@ -91,7 +91,7 @@ public record PlayerBuilder
     /// <summary>
     /// Puts the player together from whatever parts have been set.
     /// </summary>
-    public Player Build() => 
+    public Player Build() =>
         Player.Create(_name, _level, _healthPoints, _abilities, _wallet);
     
     #region Future Projects!
@@ -101,21 +101,5 @@ public record PlayerBuilder
     /// <exception cref="NotImplementedException">Always, for now.</exception>
     public static PlayerBuilder FromJson(string jsonString) => 
         throw new NotImplementedException("Not yet implemented");
-    
-    /// <summary>
-    /// Use Pattern Matching to make sure the chosen name is Valid.
-    /// `string.IsNullOrWhiteSpace` catches `null`, "", and "                 " all in one case.
-    /// The `.Trim()` method gets rid of any leading or trailing White-Space characters.
-    /// TODO:  Add more cases to this switch statement to catch other possible invalid names.
-    /// TODO:  Research:  Use "Regular Expressions" to validate that a player name is made up ONLY of
-    /// Alphabet characters, with valid punctuation inside the name.
-    /// </summary>
-    /// <returns>The trimmed name, or "Frank" when there's nothing there but White-Space.</returns>
-    private static string ValidateName(string name) =>
-        name switch
-        {
-            var n when string.IsNullOrWhiteSpace(n) => "Frank",
-            _ => name.Trim()
-        };
     #endregion
 }

@@ -11,7 +11,7 @@ public record AreaBuilder
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static AreaBuilder FromName(string name) => new() { _area = new Area(ValidateName(name)) };
+    public static AreaBuilder FromName(string name) => new() { _area = new Area(Helpers.ValidateString(name, "The Void")) };
 
     /// <summary>
     /// Start with a FROM method.  An area starts from an existing area, which is copied and modified.
@@ -33,7 +33,7 @@ public record AreaBuilder
     public AreaBuilder WithDescription(string description) => 
         this with 
         {
-            _area = _area with { Description = ValidateDescription(description) }
+            _area = _area with { Description = Helpers.ValidateString(description, "A place of nothingness.") }
         };
 
     /// <summary>
@@ -63,29 +63,4 @@ public record AreaBuilder
 
         return null;
     }
-    
-    
-    /// <summary>
-    /// TODO:  Validate the name.  For now, just make sure it's not null or whitespace.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    private static string ValidateName(string name) =>
-        name switch
-        {
-            var n when string.IsNullOrWhiteSpace(n) => "The Void",
-            _ => name.Trim()
-        };
-
-    /// <summary>
-    /// TODO:  Validate the description.  For now, just make sure it's not null or whitespace.
-    /// </summary>
-    /// <param name="description"></param>
-    /// <returns></returns>
-    private static string ValidateDescription(string description) =>
-        description switch
-        {
-            var d when string.IsNullOrWhiteSpace(d) => "A place of nothingness.",
-            _ => description.Trim()
-        };
 }

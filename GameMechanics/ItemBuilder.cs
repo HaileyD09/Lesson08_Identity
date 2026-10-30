@@ -11,7 +11,7 @@ public record ItemBuilder
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static ItemBuilder FromName(string name) => new() { _item = new Item(name, string.Empty) };
+    public static ItemBuilder FromName(string name) => new() { _item = new Item(Helpers.ValidateString(name, "Thingamajig"), string.Empty) };
 
     /// <summary>
     /// Start with a FROM method.  An item starts from an existing item, which is copied and modified.
@@ -26,7 +26,7 @@ public record ItemBuilder
     public ItemBuilder WithDescription(string description) =>
         this with
         {
-            _item = _item with { Description = description }
+            _item = _item with { Description = Helpers.ValidateString(description, "An unremarkable object.") }
         };
 
     /// <summary>

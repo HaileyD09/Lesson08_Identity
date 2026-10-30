@@ -1,7 +1,5 @@
 using TheWorld.GameMechanics;
 using TheWorld.Display;
-using TheWorld.GameMechanics.StockEntities;
-using TheWorld.Rules;
 
 using static TheWorld.Rules.DiceRollStrategies;
 
@@ -10,11 +8,6 @@ Random rng = new();
 // This is the one GameData for the whole program.  We inject it everywhere a new entity is created, so that it can be added to the game data.
 GameData gameData = new();
 
-
-// The party.  Bree is the wizard;  Tamsin is the fighter.
-var bree = StockPlayers.Bree;
-var tamsin = StockPlayers.Tamsin;
-
 var player = PlayerBuilder
     .FromName("Kyroki")
     .WithHealthPoints(rng, Dice.D6 with { Count = 2, Modifier = 1 })
@@ -22,9 +15,7 @@ var player = PlayerBuilder
     .WithWallet(Money.Roll(rng, Dice.D100, Default))
     .Build();
 
-// What they're up against.
-var goblin = StockCreatures.Goblin;
-
+// Build hands back a ReferenceLabel:  a name for people to read, and an Id for the GameData to look up.
 var tree = ItemBuilder
     .FromName("Tree")
     .WithDescription("A big tree.  It has a lot of leaves.")
@@ -32,19 +23,19 @@ var tree = ItemBuilder
 
 Console.WriteLine(tree?.Resolve(gameData)?.Examine() ?? "nothing to look at");
 
+// A second tree, copied from the first.  Same name, same description, an identity of its own.
+var tree2 = ItemBuilder
+    .FromItem(tree!.Resolve(gameData)!) // TODO: Those ! are a hack.  We need to do something better someday...
+    .WithDescription("Another big tree.")
+    .Build(gameData);
+
 var forest = AreaBuilder
     .FromName("Forest")
     .WithDescription("A dark forest.  It has a lot of trees.")
-    .WithItem(tree!) // TODO: That ! is a hack.  We need to do something better someday...
+    .WithItem(tree)
+    .WithItem(tree2!)
     .Build(gameData);
 
 Console.WriteLine(forest?.Resolve(gameData)?.LookAround() ?? "nothing to look at");
 
 player.ShowSheet();
-
-bree.ShowSheet();
-tamsin.ShowSheet();
-goblin.ShowSheet();
-
-Console.WriteLine($"Tamsin swings at the goblin:  {tamsin.AttackBonus:+0;-0;+0} to hit, against AC {goblin.ArmorClass}.");
-Console.WriteLine($"The goblin swings back:  {goblin.AttackBonus:+0;-0;+0} to hit, against AC {tamsin.ArmorClass}.");
