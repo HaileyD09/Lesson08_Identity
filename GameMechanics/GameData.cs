@@ -43,54 +43,32 @@ public record GameData
 }
 
 /// <summary>
-/// An Identifiable is a thing that has a unique identifier.  It is pure data, and is not displayed ever.
-/// </summary>
-public interface Identifiable
-{
-    public Guid Id { get; }
-}
-
-/// <summary>
 /// A ReferenceLabel is a thing that has a label and a unique identifier.  It is pure data, and is not displayed ever.
-/// It is a reference to an Identifiable, and can be used to resolve the Identifiable from the GameData.
-/// 
-/// This structure is useful for saving and loading game data, as it allows us to store a reference to an Identifiable without storing the entire object.
-/// using an Abstract Record in this way allows us to have a single structure that can be used for any Identifiable, 
-/// and we can create specific ReferenceLabel's for each type of Identifiable.
-/// 
-/// This is called a Union Type, and is a common pattern in functional programming.  
-/// It allows us to have a single type that can be one of many types, and we can use pattern matching to determine which type it is.
+/// It is a reference to a thing in the GameData, and can be used to resolve that thing from the GameData.
+///
+/// This structure is useful for saving and loading game data, as it allows us to store a reference to a thing without storing the entire object.
+/// The Label and Id are written once, and the <T> says what kind of thing the label is for.
+/// The short names (ItemReferenceLabel, etc.) are Aliases, in GlobalIncludes.cs.
+///
+/// This is called a Strongly Typed Key.  The Guid inside could open anything, but the label's Type says what kind of thing it opens,
+/// so the compiler won't let an ItemReferenceLabel go where an AreaReferenceLabel belongs.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract record ReferenceLabel<T> where T : class, Identifiable
+public record ReferenceLabel<T> where T : class
 {
     public required string Label { get; init; }
 
     public required Guid Id { get; init; }
-
-    public abstract T? Resolve(GameData gameData);
 }
 
 /// <summary>
-/// A ReferenceLabel for an Area.  It uses the human readable label to map to a particular Area in the GameData.
+/// One Resolve for each kind of label.  These are Extension Methods, so they read like the label's own:  tree.Resolve(gameData).
+/// The compiler picks the right one from the label's Type, and a label with no Resolve here won't compile.
 /// </summary>
-public record AreaReferenceLabel : ReferenceLabel<Area>
+public static class ReferenceLabelExtensions
 {
-    public override Area? Resolve(GameData gameData) => gameData.GetArea(Id);
+    public static Area? Resolve(this AreaReferenceLabel label, GameData gameData) => gameData.GetArea(label.Id);
+    public static Item? Resolve(this ItemReferenceLabel label, GameData gameData) => gameData.GetItem(label.Id);
+    public static Creature? Resolve(this CreatureReferenceLabel label, GameData gameData) => gameData.GetCreature(label.Id);
 }
 
-/// <summary>
-/// A ReferenceLabel for an Item.  It uses the human readable label to map to a particular Item in the GameData.
-/// </summary>
-public record ItemReferenceLabel : ReferenceLabel<Item>
-{
-    public override Item? Resolve(GameData gameData) => gameData.GetItem(Id);
-}
-
-/// <summary>
-/// A ReferenceLabel for a Creature.  It uses the human readable label to map to a particular Creature in the GameData.
-/// </summary>
-public record CreatureReferenceLabel : ReferenceLabel<Creature>
-{
-    public override Creature? Resolve(GameData gameData) => gameData.GetCreature(Id);
-}

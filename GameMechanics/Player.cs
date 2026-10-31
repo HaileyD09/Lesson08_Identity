@@ -10,7 +10,7 @@ namespace TheWorld.GameMechanics;
 /// </summary>
 public record Player
 {
-    // TODO: Make Player Identifiable, and give it a Guid Id, just like Creature does.
+    // TODO: Give Player a Guid Id, just like Creature does.
     // Then add Players to the GameData (with a PlayerReferenceLabel), and inject the GameData into PlayerBuilder.Build,
     // just like AreaBuilder and ItemBuilder do.
 

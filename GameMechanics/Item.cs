@@ -3,7 +3,7 @@ namespace TheWorld.GameMechanics;
 /// <summary>
 /// A thing in the world.
 /// </summary>
-public record Item : Identifiable
+public record Item
 {
     /// <summary>
     /// This is a unique identifier for the item.  It is pure data, and is not displayed ever.

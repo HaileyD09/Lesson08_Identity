@@ -29,11 +29,20 @@ var tree2 = ItemBuilder
     .WithDescription("Another big tree.")
     .Build(gameData);
 
+// One recipe, two goblins.  Each call to Build makes a brand-new Creature with an identity of its own.
+var goblinRecipe = CreatureBuilder
+    .FromName("Goblin")
+    .WithExperienceReward(50);
+var goblin = goblinRecipe.Build(gameData);
+var goblin2 = goblinRecipe.Build(gameData);
+
 var forest = AreaBuilder
     .FromName("Forest")
     .WithDescription("A dark forest.  It has a lot of trees.")
-    .WithItem(tree)
+    .WithItem(tree!)
     .WithItem(tree2!)
+    .WithCreature(goblin!)
+    .WithCreature(goblin2!)
     .Build(gameData);
 
 Console.WriteLine(forest?.Resolve(gameData)?.LookAround() ?? "nothing to look at");

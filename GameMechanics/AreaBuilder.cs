@@ -37,13 +37,14 @@ public record AreaBuilder
         };
 
     /// <summary>
-    /// TODO: We need to revisit CreatureBuilder so that they are added into the GameData!
+    /// Adds a creature to the area being built.  The creature must already be in the GameData:
+    /// build it with CreatureBuilder.Build(gameData), and pass in the label that comes back.
     /// </summary>
-    /// <param name="creature"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public AreaBuilder WithCreature(CreatureReferenceLabel creature) =>
-        throw new NotImplementedException("WithCreature is not implemented yet.");
+        this with
+        {
+            _area = _area with { Creatures = [.. _area.Creatures, creature] }
+        };
 
     public AreaBuilder WithItem(ItemReferenceLabel item) =>
         this with

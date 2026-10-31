@@ -8,7 +8,7 @@ namespace TheWorld.GameMechanics;
 /// CreatureBuilder, and it trusts the builder to have done the checking
 /// already.
 /// </summary>
-public record Creature : Identifiable
+public record Creature
 {
     /// <summary>
     /// This is a unique identifier for the creature.  It is pure data, and is not displayed ever.

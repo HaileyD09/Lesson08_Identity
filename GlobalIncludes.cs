@@ -3,6 +3,11 @@
 // and then Returns an Integer (presumably from a dice-roll, but that's up to the programmer).
 global using DiceRollStrategy = System.Func<System.Random, TheWorld.GameMechanics.Dice, int>;
 
+// More Aliases!  One short name for each kind of ReferenceLabel (see GameData.cs).
+global using AreaReferenceLabel = TheWorld.GameMechanics.ReferenceLabel<TheWorld.GameMechanics.Area>;
+global using ItemReferenceLabel = TheWorld.GameMechanics.ReferenceLabel<TheWorld.GameMechanics.Item>;
+global using CreatureReferenceLabel = TheWorld.GameMechanics.ReferenceLabel<TheWorld.GameMechanics.Creature>;
+
 namespace TheWorld;
 
 /// <summary>
@@ -12,7 +17,6 @@ namespace TheWorld;
 public static class Helpers
 {
     /// <summary>
-    /// A First-Class Function: it's a Func stored in a field, so it can be called, passed around, or stored like any other value.
     /// Use Pattern Matching to make sure a string is Valid.
     /// The `null` case is checked first so the compiler knows `input` can't be null by the last case.
     /// `string.IsNullOrWhiteSpace` then catches "" and "                 ".
@@ -23,7 +27,7 @@ public static class Helpers
     /// Alphabet characters, with valid punctuation inside the name.
     /// </summary>
     /// <returns>The trimmed input, or the fallback when there's nothing there but White-Space.</returns>
-    public static readonly Func<string?, string, string> ValidateString = (input, fallback) =>
+    public static string ValidateString(string? input, string fallback) =>
         input switch
         {
             null => fallback,

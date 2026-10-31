@@ -32,9 +32,22 @@ public record CreatureBuilder
 
     /// <summary>
     /// Puts the creature together from whatever parts have been set.
-    /// TODO: We need to revisit CreatureBuilder so that they are added into the GameData!  
-    /// We need to inject GameData here, and then Build can return a CreatureReferenceLabel?, just like AreaBuilder and ItemBuilder do.
+    /// StockCreatures still uses this one, so it hands back the Creature itself.
     /// </summary>
     public Creature Build() =>
         Creature.Create(_name, _healthPoints, _abilities, _experienceReward);
+
+    /// <summary>
+    /// Builds the creature and adds it to the game data, just like AreaBuilder and ItemBuilder do.
+    /// Every call builds a brand-new Creature, so the same builder can make as many goblins as you want.
+    /// </summary>
+    /// <returns>A label for the new creature, or null if it couldn't be added.</returns>
+    public CreatureReferenceLabel? Build(GameData gameData)
+    {
+        var creature = Build();
+        if (gameData.TryAddCreature(creature))
+            return new() { Id = creature.Id, Label = creature.Name };
+
+        return null;
+    }
 }

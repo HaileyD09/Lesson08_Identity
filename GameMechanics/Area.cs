@@ -5,7 +5,7 @@ namespace TheWorld.GameMechanics;
 /// <summary>
 /// A place in the world.
 /// </summary>
-public record Area : Identifiable
+public record Area
 {
     /// <summary>
     /// This is a unique identifier for the area.  It is pure data, and is not displayed ever.
