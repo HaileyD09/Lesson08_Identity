@@ -54,7 +54,7 @@ public record GameData
 /// so the compiler won't let an ItemReferenceLabel go where an AreaReferenceLabel belongs.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public record ReferenceLabel<T> where T : class
+public record ReferenceLabel<T>
 {
     public required string Label { get; init; }
 
