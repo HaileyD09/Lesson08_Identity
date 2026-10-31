@@ -21,11 +21,11 @@ var tree = ItemBuilder
     .WithDescription("A big tree.  It has a lot of leaves.")
     .Build(gameData);
 
-Console.WriteLine(tree?.Resolve(gameData)?.Examine() ?? "nothing to look at");
+Console.WriteLine(gameData.Get(tree)?.Examine() ?? "nothing to look at");
 
 // A second tree, copied from the first.  Same name, same description, an identity of its own.
 var tree2 = ItemBuilder
-    .FromItem(tree!.Resolve(gameData)!) // TODO: Those ! are a hack.  We need to do something better someday...
+    .FromItem(gameData.Get(tree)!) // TODO: That ! is a hack.  We need to do something better someday...
     .WithDescription("Another big tree.")
     .Build(gameData);
 
@@ -45,6 +45,6 @@ var forest = AreaBuilder
     .WithCreature(goblin2!)
     .Build(gameData);
 
-Console.WriteLine(forest?.Resolve(gameData)?.LookAround() ?? "nothing to look at");
+Console.WriteLine(gameData.Get(forest)?.LookAround() ?? "nothing to look at");
 
 player.ShowSheet();

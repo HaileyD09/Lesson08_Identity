@@ -59,7 +59,7 @@ public record AreaBuilder
     /// <returns>A label for the new area, or null if it couldn't be added.</returns>
     public AreaReferenceLabel? Build(GameData gameData)
     {
-        if (gameData.TryAddArea(_area))
+        if (gameData.TryAdd(_area))
             return new() { Id = _area.Id, Label = _area.Name };
 
         return null;

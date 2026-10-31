@@ -29,22 +29,26 @@ public record GameData
     // TODO:  This is a very simple implementation.  It does not handle duplicates, and it does not handle errors.  It is just a starting point.
     //--------------------------------------------------------------
 
-    public bool TryAddArea(Area area) => Areas.TryAdd(area.Id, area);
-    public bool TryAddItem(Item item) => Items.TryAdd(item.Id, item);
-    public bool TryAddCreature(Creature creature) => Creatures.TryAdd(creature.Id, creature);
+    // Three methods named TryAdd.  They're Overloads:  C# picks one by the type you hand it.
+    public bool TryAdd(Area area) => Areas.TryAdd(area.Id, area);
+    public bool TryAdd(Item item) => Items.TryAdd(item.Id, item);
+    public bool TryAdd(Creature creature) => Creatures.TryAdd(creature.Id, creature);
 
     //--------------------------------------------------------------
-    //  Methods for retrieving Areas, Items, and Creatures by their Id.
+    //  Methods for retrieving Areas, Items, and Creatures by their label.
     // TODO:  This is a very simple implementation.  It does not handle errors.  It is just a starting point.
     //--------------------------------------------------------------
-    public Area? GetArea(Guid id) => Areas.GetValueOrDefault(id);
-    public Item? GetItem(Guid id) => Items.GetValueOrDefault(id);
-    public Creature? GetCreature(Guid id) => Creatures.GetValueOrDefault(id);
+
+    // Get gets Overloaded too, now that every kind of label is its own Type.  (In Lesson 7 every key was a string, so it couldn't be.)
+    // A null label finds nothing, so gameData.Get(tree)?.Examine() works even when tree might be null.
+    public Area? Get(AreaReferenceLabel? label) => label is null ? null : Areas.GetValueOrDefault(label.Id);
+    public Item? Get(ItemReferenceLabel? label) => label is null ? null : Items.GetValueOrDefault(label.Id);
+    public Creature? Get(CreatureReferenceLabel? label) => label is null ? null : Creatures.GetValueOrDefault(label.Id);
 }
 
 /// <summary>
 /// A ReferenceLabel is a thing that has a label and a unique identifier.  It is pure data, and is not displayed ever.
-/// It is a reference to a thing in the GameData, and can be used to resolve that thing from the GameData.
+/// It is a reference to a thing in the GameData, and GameData.Get uses it to find that thing.
 ///
 /// This structure is useful for saving and loading game data, as it allows us to store a reference to a thing without storing the entire object.
 /// The Label and Id are written once, and the <T> says what kind of thing the label is for.
@@ -59,16 +63,5 @@ public record ReferenceLabel<T>
     public required string Label { get; init; }
 
     public required Guid Id { get; init; }
-}
-
-/// <summary>
-/// One Resolve for each kind of label.  These are Extension Methods, so they read like the label's own:  tree.Resolve(gameData).
-/// The compiler picks the right one from the label's Type, and a label with no Resolve here won't compile.
-/// </summary>
-public static class ReferenceLabelExtensions
-{
-    public static Area? Resolve(this AreaReferenceLabel label, GameData gameData) => gameData.GetArea(label.Id);
-    public static Item? Resolve(this ItemReferenceLabel label, GameData gameData) => gameData.GetItem(label.Id);
-    public static Creature? Resolve(this CreatureReferenceLabel label, GameData gameData) => gameData.GetCreature(label.Id);
 }
 

@@ -36,7 +36,7 @@ public record ItemBuilder
     /// <returns>A label for the new item, or null if it couldn't be added.</returns>
     public ItemReferenceLabel? Build(GameData gameData)
     {
-        if (gameData.TryAddItem(_item))
+        if (gameData.TryAdd(_item))
             return new() { Id = _item.Id, Label = _item.Name };
 
         return null;

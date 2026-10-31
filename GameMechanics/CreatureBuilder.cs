@@ -45,7 +45,7 @@ public record CreatureBuilder
     public CreatureReferenceLabel? Build(GameData gameData)
     {
         var creature = Build();
-        if (gameData.TryAddCreature(creature))
+        if (gameData.TryAdd(creature))
             return new() { Id = creature.Id, Label = creature.Name };
 
         return null;
