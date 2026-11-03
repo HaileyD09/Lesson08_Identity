@@ -30,14 +30,21 @@ public record ItemBuilder
         };
 
     /// <summary>
+    /// Hands back the Item itself, without adding it to the game data.
+    /// StockItems uses this one, just like StockCreatures uses CreatureBuilder's.
+    /// </summary>
+    public Item Build() => _item;
+
+    /// <summary>
     /// Builds the item and adds it to the game data.
     /// </summary>
     /// <param name="gameData"></param>
     /// <returns>A label for the new item, or null if it couldn't be added.</returns>
     public ItemReferenceLabel? Build(GameData gameData)
     {
-        if (gameData.TryAdd(_item))
-            return new() { Id = _item.Id, Label = _item.Name };
+        var item = Build();
+        if (gameData.TryAdd(item))
+            return new() { Id = item.Id, Label = item.Name };
 
         return null;
     }
