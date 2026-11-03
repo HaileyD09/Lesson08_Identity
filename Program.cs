@@ -36,6 +36,16 @@ var goblinRecipe = CreatureBuilder
 var goblin = goblinRecipe.Build(gameData);
 var goblin2 = goblinRecipe.Build(gameData);
 
+var g1 = gameData.Get(goblin)!;
+var g2 = gameData.Get(goblin2)!;
+
+var goblin3Ref = goblin! with { Label = "Goblin3" };
+
+var g3 = g1 with { };
+
+Console.WriteLine(ReferenceEquals(g1, g3));
+
+
 var forest = AreaBuilder
     .FromName("Forest")
     .WithDescription("A dark forest.  It has a lot of trees.")
@@ -48,3 +58,11 @@ var forest = AreaBuilder
 Console.WriteLine(gameData.Get(forest)?.LookAround() ?? "nothing to look at");
 
 player.ShowSheet();
+
+// strings are stupid
+// - have no context
+// creaturereferencelabel
+//  + name
+//  + ID
+// an ID and name that refers to a creature strongly
+// ID and label that refer to item strongly for ItemReferenceLabel --> same properties, different type

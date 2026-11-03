@@ -41,7 +41,10 @@ public record GameData
 
     // Get gets Overloaded too, now that every kind of label is its own Type.  (In Lesson 7 every key was a string, so it couldn't be.)
     // A null label finds nothing, so gameData.Get(tree)?.Examine() works even when tree might be null.
-    public Area? Get(AreaReferenceLabel? label) => label is null ? null : Areas.GetValueOrDefault(label.Id);
+    public Area? Get(AreaReferenceLabel? label) => 
+        label is null 
+            ? null 
+            : Areas.GetValueOrDefault(label.Id);
     public Item? Get(ItemReferenceLabel? label) => label is null ? null : Items.GetValueOrDefault(label.Id);
     public Creature? Get(CreatureReferenceLabel? label) => label is null ? null : Creatures.GetValueOrDefault(label.Id);
 }
