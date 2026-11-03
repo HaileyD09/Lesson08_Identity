@@ -2,7 +2,12 @@ namespace TheWorld.GameMechanics;
 
 public record AreaBuilder
 {
-    private Area _area = null!;
+    // Default values for every part of an Area, the same trick PlayerBuilder and CreatureBuilder use.
+    private string _name = "The Void";
+    private string _description = string.Empty;
+    private IReadOnlyList<CreatureReferenceLabel> _creatures = [];
+    private IReadOnlyList<ItemReferenceLabel> _items = [];
+    private IReadOnlyList<AreaReferenceLabel> _neighbors = [];
 
     private AreaBuilder() { }
 
@@ -11,18 +16,26 @@ public record AreaBuilder
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static AreaBuilder FromName(string name) => new() { _area = new Area(Helpers.ValidateString(name, "The Void")) };
+    public static AreaBuilder FromName(string name) => new() { _name = Helpers.ValidateString(name, "The Void") };
 
     /// <summary>
-    /// Start with a FROM method.  An area starts from an existing area, which is copied and modified.
+    /// Start with a FROM method.  An area starts from the parts of an existing area, which can then be changed.
+    /// The Id isn't one of the parts:  Build gives every new Area an identity of its own.
     /// </summary>
-    public static AreaBuilder FromArea(Area area) => new() { _area = area with { Id = Guid.NewGuid() } };
+    public static AreaBuilder FromArea(Area area) => new()
+    {
+        _name = area.Name,
+        _description = area.Description,
+        _creatures = area.Creatures,
+        _items = area.Items,
+        _neighbors = area.Neighbors
+    };
 
 
     /// <summary>
     /// TODO: Start with a FROM method.  An area starts from a JSON string, which is parsed and modified.
     /// </summary>
-    public static AreaBuilder FromJson(string json) => 
+    public static AreaBuilder FromJson(string json) =>
         throw new NotImplementedException("FromJson is not implemented yet.  It will be implemented in a future lesson.");
 
     /// <summary>
@@ -30,27 +43,30 @@ public record AreaBuilder
     /// </summary>
     /// <param name="description"></param>
     /// <returns></returns>
-    public AreaBuilder WithDescription(string description) => 
-        this with 
-        {
-            _area = _area with { Description = Helpers.ValidateString(description, "A place of nothingness.") }
-        };
+    public AreaBuilder WithDescription(string description) =>
+        this with { _description = Helpers.ValidateString(description, "A place of nothingness.") };
 
     /// <summary>
     /// Adds a creature to the area being built.  The creature must already be in the GameData:
     /// build it with CreatureBuilder.Build(gameData), and pass in the label that comes back.
     /// </summary>
     public AreaBuilder WithCreature(CreatureReferenceLabel creature) =>
-        this with
-        {
-            _area = _area with { Creatures = [.. _area.Creatures, creature] }
-        };
+        this with { _creatures = [.. _creatures, creature] };
 
     public AreaBuilder WithItem(ItemReferenceLabel item) =>
-        this with
-        {
-            _area = _area with { Items = [.. _area.Items, item] }
-        };
+        this with { _items = [.. _items, item] };
+
+    /// <summary>
+    /// Puts the area together from whatever parts have been set, and hands back the Area itself.
+    /// Every call builds a brand-new Area, with an identity of its own.
+    /// </summary>
+    public Area Build() => new(_name)
+    {
+        Description = _description,
+        Creatures = _creatures,
+        Items = _items,
+        Neighbors = _neighbors
+    };
 
     /// <summary>
     /// Builds the area and adds it to the game data.
@@ -59,8 +75,9 @@ public record AreaBuilder
     /// <returns>A label for the new area, or null if it couldn't be added.</returns>
     public AreaReferenceLabel? Build(GameData gameData)
     {
-        if (gameData.TryAdd(_area))
-            return new() { Id = _area.Id, Label = _area.Name };
+        var area = Build();
+        if (gameData.TryAdd(area))
+            return new() { Id = area.Id, Label = area.Name };
 
         return null;
     }
