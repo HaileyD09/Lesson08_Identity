@@ -47,6 +47,15 @@ public record GameData
             : Areas.GetValueOrDefault(label.Id);
     public Item? Get(ItemReferenceLabel? label) => label is null ? null : Items.GetValueOrDefault(label.Id);
     public Creature? Get(CreatureReferenceLabel? label) => label is null ? null : Creatures.GetValueOrDefault(label.Id);
+
+    public bool TryUpdate(Area area)
+    {
+        if(!Areas.ContainsKey(area.Id))
+            return false;
+        
+        Areas[area.Id] = area;
+        return true;
+    }
 }
 
 /// <summary>

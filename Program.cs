@@ -57,6 +57,43 @@ var forest = AreaBuilder
 
 Console.WriteLine(gameData.Get(forest)?.LookAround() ?? "nothing to look at");
 
+var wolf = CreatureBuilder
+    .FromName("Wolf")
+    .WithExperienceReward(50)
+    .Build(gameData);
+
+var bat = CreatureBuilder
+    .FromName("Bat")
+    .WithExperienceReward(50)
+    .Build(gameData);
+
+var lantern = ItemBuilder
+    .FromName("Lantern")
+    .WithDescription("A rusty lantern. Somebody left it here, still burning.")
+    .Build(gameData);
+
+var cave = AreaBuilder
+    .FromName("Cave")
+    .WithDescription("Damp and dark. Something drips, and something else squeaks.")
+    .WithCreature(goblinRecipe.Build(gameData)!)
+    .WithCreature(goblinRecipe.Build(gameData)!)
+    .WithCreature(wolf!)
+    .WithCreature(bat!)
+    .WithItem(lantern!)
+    .Build(gameData);
+
+var forestArea = gameData.Get(forest)!;
+
+forest = AreaBuilder.FromArea(forestArea)
+    .WithNeighbor(cave!)
+    .Build(gameData);
+
+var caveArea = gameData.Get(cave)!;
+
+cave = AreaBuilder.FromArea(caveArea)
+    .WithNeighbor(forest with {Label = "Outside"})
+    .Build(gameData);
+
 player.ShowSheet();
 
 // strings are stupid
